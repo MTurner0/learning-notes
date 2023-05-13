@@ -13,55 +13,55 @@ The titular saying “diamonds in the dirt” here refers to extracting useful i
 
 - Formalisms:
 
- - **Block independent-disjoint (BID) database:** Tuples within a relation can be partitioned into **blocks** such that the tuples *within* each block represent disjoint events while tuples *across* blocks are independent.
+    - **Block independent-disjoint (BID) database:** Tuples within a relation can be partitioned into **blocks** such that the tuples *within* each block represent disjoint events while tuples *across* blocks are independent.
 
- - **c-table:** Each tuple is annotated with its **lineage** (a Boolean expression over some hidden variables).
+    - **c-table:** Each tuple is annotated with its **lineage** (a Boolean expression over some hidden variables).
 
-  - *Closure property* of c-tables: it is always possible to compute the lineage of output tuples from those of the input tuples.
+        - *Closure property* of c-tables: it is always possible to compute the lineage of output tuples from those of the input tuples.
 
 - How do we represent a probabilistic DB?
 
- - Tradeoff between representational accuracy and processing/scaling.
+    - Tradeoff between representational accuracy and processing/scaling.
 
- - A **probabilistic database** is a discrete probability space $PDB=(W,\mathbf{P})$, where $W=\{I_1,I_2,\dots,I_n\}$ is a set of possible instances, called possible worlds, and $\mathbf{P}:W\to[0,1]$ is such that $\sum_{j=1,n}\mathbf{P}(I_j)=1$.
+    - A **probabilistic database** is a discrete probability space $PDB=(W,\mathbf{P})$, where $W=\{I_1,I_2,\dots,I_n\}$ is a set of possible instances, called possible worlds, and $\mathbf{P}:W\to[0,1]$ is such that $\sum_{j=1,n}\mathbf{P}(I_j)=1$.
 
- - If $Q$ is a query and $t$ is a possible tuple in the answer to $Q$, then $\mathbf{P}(t\in Q)$ denotes the probability that $t$ is an answer to $Q$ in a randomly chosen world.
+    - If $Q$ is a query and $t$ is a possible tuple in the answer to $Q$, then $\mathbf{P}(t\in Q)$ denotes the probability that $t$ is an answer to $Q$ in a randomly chosen world.
 
- - For $Q$, the job of a ProbDMS is to return all possible tuples $t_1,t_2,\dots$ along with their probabilities $\mathbf{P}(t_1\in Q),\mathbf{P}(t_2\in Q),\dots$
+    - For $Q$, the job of a ProbDMS is to return all possible tuples $t_1,t_2,\dots$ along with their probabilities $\mathbf{P}(t_1\in Q),\mathbf{P}(t_2\in Q),\dots$
 
 - How do we answer queries?
 
- - Complex, [decision-support style](https://en.wikipedia.org/wiki/Decision_support_system) SQL with aggregates.
+    - Complex, [decision-support style](https://en.wikipedia.org/wiki/Decision_support_system) SQL with aggregates.
 
- - Query execution requires:
+    - Query execution requires:
 
-  1. Fetching and transforming the data.
+        1. Fetching and transforming the data.
 
-  2. Performing probabilistic inference. (This part dominates total running time as data scales.)
+        2. Performing probabilistic inference. (This part dominates total running time as data scales.)
 
- - A **safe plan** allows probabilistic inference to be performed entirely within the query plan, with no need for a separate probabilistic inference step.
+    - A **safe plan** allows probabilistic inference to be performed entirely within the query plan, with no need for a separate probabilistic inference step.
 
-  - Relational algebra operators must be extended to manipulate probabilities.
+        - Relational algebra operators must be extended to manipulate probabilities.
 
-  - Safety does not depend on the database instance; a safe plan can be executed on any instance.
+        - Safety does not depend on the database instance; a safe plan can be executed on any instance.
 
-  - Safe queries have PTIME complexity, while most (see the *dichotomy property*) unsafe queries are #P-hard.
+        - Safe queries have PTIME complexity, while most (see the *dichotomy property*) unsafe queries are #P-hard.
 
- - **Materialized views** are answers to previous queries that can be used to answer future queries, potentially improving performance.
+    - **Materialized views** are answers to previous queries that can be used to answer future queries, potentially improving performance.
 
 - How do we present query results to the user?
 
- - Output tuples can be ranked by probability, but this does not represent the probabilistic relationship between two output tuples (correlated, mutually exclusive, etc.).
+    - Output tuples can be ranked by probability, but this does not represent the probabilistic relationship between two output tuples (correlated, mutually exclusive, etc.).
 
- - User-specified ranking criteria may be combined with probabilities $\mathbf{P}(t_i\in Q)$ to rank output tuples.
+    - User-specified ranking criteria may be combined with probabilities $\mathbf{P}(t_i\in Q)$ to rank output tuples.
 
-  - **Top-k query answering:** Returning only the k highest-ranked tuples.
+        - **Top-k query answering:** Returning only the k highest-ranked tuples.
 
- - In SQL, aggregates come in two forms:
+    - In SQL, aggregates come in two forms:
 
-  - **Value aggregates:** For ProbDMS, this is an expected value.
+        - **Value aggregates:** For ProbDMS, this is an expected value.
 
-  - **Predicate aggregates:** Can be computed by provenance semi rings combined with safe plans.
+        - **Predicate aggregates:** Can be computed by provenance semi rings combined with safe plans.
 
 
 ## Highlights
