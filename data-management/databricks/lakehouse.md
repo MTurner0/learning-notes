@@ -4,6 +4,10 @@
 
 The *what* and *why* of [Databricks](https://databricks.com), essentially.
 
+**Media type:** Conference paper, CIDR '21
+
+**Year:** 2021
+
 ## Summary
 
 - History of data architectures:

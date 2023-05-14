@@ -2,6 +2,12 @@
 
 ## About
 
+[Exactly What It Says On The Tin](https://tvtropes.org/pmwiki/pmwiki.php/Main/ExactlyWhatItSaysOnTheTin): Conceptualizing model training as a special case of ETL.
+
+**Media type:** Blog post, Substack
+
+**Year:** 2021
+
 ## Summary
 
 - Elements of ETL pipelines:

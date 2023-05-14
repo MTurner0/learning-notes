@@ -5,6 +5,10 @@
 A review paper about probabilistic databases.
 The titular saying “diamonds in the dirt” here refers to extracting useful information from noisy data.
 
+**Media type:** Review article, *Communications of the ACM*
+
+**Year:** 2009
+
 ## Summary
 
 - Extractors produce **confidence scores** to represent uncertainty: e.g. The probability scores in [BERN2](http://bern2.korea.ac.kr/).

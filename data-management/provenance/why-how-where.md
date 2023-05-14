@@ -2,8 +2,12 @@
 
 ## About
 
-“Citation needed,” so to speak.
+“Citation needed” for data, so to speak.
 Provenance can help end users assess the validity of query results.
+
+**Media type:** Review article, *Foundations and Trends in Databases*
+
+**Year:** 2009
 
 ## Summary
 
