@@ -43,7 +43,7 @@ Provenance can help end users assess the validity of query results.
 
         - **Location** (of a value $v\in t:t\in I$): The tuple (row) and attribute (column) address of $v$ within the relation $I$.
 
-        - **Where-provenance** (of some $v\in t: t\in Q(I)$): The set of locations of $v$ in $I$.
+        - **Where-provenance** (of some $v\in t: t\in Q(I) $): The set of locations of $v$ in $I$.
 
         - The where-provenance of $v$ consists of locations that can be found in tuples of the why-provenance of $t$.
 
