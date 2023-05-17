@@ -40,7 +40,7 @@
 
     - Consistency properties:
 
-        - Usually: eventual consistency for each key guaranteed, with no consistency guaranteed across keys.
+        - Usually: [eventual consistency](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) for each key guaranteed, with no consistency guaranteed across keys.
 
         - Time delays between when one client uploads a new object and when the object is visible to other users.
 
@@ -48,7 +48,11 @@
 
         - Store records as a [collection of columnar items](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5447738 "See HDFS"), potentially partitioned into directories based on attributes.
 
-        - 
+            - Problems: No atomicity, _eventual_ consistency, poor performance, no management functionality (e.g. table versioning or audit logs).
+
+        - [Custom, "closed-world" storage engines](https://event.cwi.nl/lsde/papers/p215-dageville-snowflake.pdf "Such as the Snowflake data warehouse") that manage metadata in a separate, strongly-consistent service.
+
+            - Problems: Running separate, highly-available service to manage metadata can be expensive, add overhead, and lock users into one provider.
 
     - Performance characteristics of object stores have implications for analytical workloads:
 
@@ -60,7 +64,17 @@
 
         1. LIST operations should be avoided, with key ranges preferred where possible.
 
+- *Delta lake table:* On a cloud object store or file system, a directory holding:
 
+    1. *Data objects:* [Apache Parquet objects](https://parquet.apache.org/docs/overview/motivation/) containing relation tuples.
+
+        - Advantages of Parquet: Column-oriented, offers diverse compression updates, supports nested data types, has performant implementations in many engines.
+
+        - Each data object has a unique name, usually assigned by the author as a GUID.
+
+    1. *Log:* A sequence of records (each taking the form of a JSON object), together with occasional checkpoints. Stored in the `_delta_log` subdirectory within the table.
+
+        - *Checkpoint*, for specific log objects: Summarizes the log up to that point in Parquet format. 
 
 ## Commentary
 
