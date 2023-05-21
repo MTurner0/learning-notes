@@ -2,7 +2,7 @@
 
 ## About
 
-
+A [deeper dive](https://github.com/MTurner0/learning-notes/blob/main/data-management/databricks/lakehouse.md) into the first data lakehouse, which aims to balance provide ACID transactions, streaming I/O, and SSD caching to object stores.
 
 **Media type:** Research paper, *Proceedings of the VLDB Endowment*
 
@@ -74,9 +74,89 @@
 
     1. *Log:* A sequence of records (each taking the form of a JSON object), together with occasional checkpoints. Stored in the `_delta_log` subdirectory within the table.
 
-        - *Checkpoint*, for specific log objects: Summarizes the log up to that point in Parquet format. 
+        - Each record object contains an array of actions that produce the next version of the DLT when applied to the previous version. Actions include:
+
+            - Change metadata: [`Metadata`](https://books.japila.pl/delta-lake-internals/Metadata/).
+
+            - Add or remove files: [`AddFile`](https://books.japila.pl/delta-lake-internals/AddFile/), [`RemoveFile`](https://books.japila.pl/delta-lake-internals/RemoveFile/).
+
+            - Protocol evolution: [`Protocol`](https://books.japila.pl/delta-lake-internals/Protocol/),
+
+            - Add [provenance](https://github.com/MTurner0/learning-notes/tree/main/data-management/provenance) information: [`CommitInfo`](https://books.japila.pl/delta-lake-internals/CommitInfo/).
+
+            - Update application transaction IDs: [`SetTransaction`](https://books.japila.pl/delta-lake-internals/SetTransaction/).
+        
+        - *Checkpoint*, for specific log objects: Summarizes the log up to that point in Parquet format.
+
+- Access protocols:
+
+    - Protocol for read-only transactions:
+
+        1. Let the *start key* be: If [the `_last_checkpoint` object](https://books.japila.pl/delta-lake-internals/checkpoints/Checkpoints/#implementations) exists in the table's log directory, its **checkpoint ID.**
+        Otherwise, **0.**
+
+        1. Let the *reconstruction records* be a list of `.json` and `.parquet` files in the log directory found via a LIST operation with the *start key.*
+
+        1. Use the *reconstruction records* and last checkpoint (if it exists) to reconstruct the state of the table with its data statistics.
+        This can be parallelized.
+
+        1. Use the [statistics](https://books.japila.pl/delta-lake-internals/data-skipping/#learn-more) to identify the set of data object files relevant to the query.
+
+        1. Apply the query to the set.
+
+    - Protocol for write transactions:
+
+        1. Use the first two steps of the read protocol to identify a recent log record ID $r$.
+
+        1. Use the third step of the read protocol to read the table at version $r$.
+
+        1. Write any new data objects into new files in the correct data directories, using GUIDs to generate object names.
+        This can be parallelized.
+
+        1. Attempt to write the transaction's log into the $r+1$ `.json` log object.
+        This will fail if another client has written this object.
+
+        1. Optionally, write a new `.parquet` checkpoint for log record $r+1$ and update `_last_checkpoint` to point to this checkpoint.
+
+    - Notes on these access protocols:
+
+        - Step 4 of the write protocol must be atomic.
+
+        - All transactions that perform writes are [serializable](https://en.wikipedia.org/wiki/Serializability), while the read protocol described here achieves [snapshot isolation](https://en.wikipedia.org/wiki/Snapshot_isolation).
+        It is also possible to perform serializable read transactions.
+
+        - Delta Lake currently only supports transactions within one table.
+
+        - The rate of write transactions is limited by the latency of [put-if-absent](https://en.wikipedia.org/wiki/Optimistic_concurrency_control) operations to write new log records.
+
+- Higher level features:
+
+    - Time travel and rollbacks using the DLT's log.
+
+        - Supports SQL `AS OF timestamp` and `VERSION AS OF commit_id` syntax for reading past snapshots.
+
+        > `MERGE INTO mytable target USING mytable TIMESTAMP AS OF <old_date> source ON source.userId = target.userId WHEN MATCHED THEN UPDATE SET *`
+
+    - Efficient `UPSERT`, `DELETE`, and `MERGE` operations compared to data lakes, since these operations can be performed transactionally.
+
+    - Each DLT's log can be treated as a message queue, reducing the need for separate message buses (e.g. Apache Kafka, Kinesis). 
+
+    - Data layout optimization features:
+
+        - The bin-packing [`OPTIMIZE`](https://docs.delta.io/latest/optimizations-oss.html#optimize-performance-with-file-management) function rebalances data objects with the aim to make each one ~1GB.
+
+        - [Z-ordering](https://docs.delta.io/latest/optimizations-oss.html#z-ordering-multi-dimensional-clustering) by multiple attributes.
+
+        - Optional `AUTO OPTIMIZE` on [Databricks cloud](https://docs.databricks.com/delta/tune-file-size.html#auto-compact).
+    
+    - [Caching](https://docs.databricks.com/optimizations/disk-cache.html).
+
+    - Audit logging using [`DESCRIBE HISTORY`](https://docs.delta.io/latest/delta-utility.html#-delta-history) and commit information logging.
+
+    - Schema evolution and enforcement.
+
+    - Connectors to query and ETL engines.
 
 ## Commentary
 
 The way people [talk about](https://www.confessionsofadataguy.com/5-things-i-wish-i-knew-about-databricks-before-i-started/) the Databricks ecosystem reminds me of Apple products: each individual unit does its job well but only reaches its full potential as part of the complete tool system.
-
