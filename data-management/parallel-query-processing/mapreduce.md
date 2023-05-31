@@ -65,3 +65,15 @@ MapReduce is a programming model facilitating fault-tolerant, parallelized, dist
             - When the *Map* and *Reduce* operators are deterministic with respect to their input values, **the distributed implementation** (even in the presence of faults) **produces the same output as would have been produced by non-faulting sequential execution of the entire program.**
 
             - If the *Map* and/or *Reduce* operators are non-deterministic, **the output of any particular reduce task** $R_i$ **is equivalent to the output for** $R_i$ **produced by a sequential execution of the non-deterministic program.**
+
+- [Assumptions](https://pages.cs.wisc.edu/~shivaram/cs744-fa22-slides/cs744-mapred.pdf):
+
+    - Commodity networking, less bisection bandwidth.
+
+    - Failures are common.
+
+    - Local storage is cheap.
+
+    - Replicated filesystem.
+
+    - Input is splittable.
