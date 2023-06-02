@@ -110,10 +110,10 @@ Certain applications (*internet services*) are large enough to require the resou
 
 Trends:
 
-    - Data access from memory is [increasingly expensive](https://arxiv.org/pdf/2012.03112.pdf); memory bandwidth is growing slower than capacity.
+1. Data access from memory is [increasingly expensive](https://arxiv.org/pdf/2012.03112.pdf); memory bandwidth is growing slower than capacity.
 
-    - CPU speed per core is flat.
+1. CPU speed per core is flat.
 
-    - SSD, NVMe are replacing HDDs.
+1. SSD, NVMe are replacing HDDs.
 
-    - Ethernet bandwidth is growing.
+1. Ethernet bandwidth is growing.
