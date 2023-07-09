@@ -2,7 +2,7 @@
 
 ## About
 
-*Short description*
+Path multiset representations allow results of a regular path query in a graph database to be succinctly represented.
 
 **Media type:** Research paper, *Proceedings of the VLDB Endowment*
 
@@ -16,9 +16,9 @@
 
     - Representing intermediate path query results can be expensive when the number of paths is very large.
 
-- A *regular path query* (RPQ) comprises a regular expression $e$.
+- A *regular path query* (RPQ) comprises a regular expression $\epsilon$.
 
-    - The evaluation of $e$ over an edge-labelled graph $G$ returns all node pairs $(x, y)$ s.t. there exists a path from $x$ to $y$ in $G$ whose sequence of edge labels forms a word in the language of $G$.
+    - The evaluation of $\epsilon$ over an edge-labelled graph $G$ returns all node pairs $(x, y)$ s.t. there exists a path from $x$ to $y$ in $G$ whose sequence of edge labels forms a word in the language of $G$.
 
     - For QLs in which paths are first-class citizens, the evaluation of an RPQ returns all such node pairs $(x, y)$ as well as all paths between each pair: e.g. $(x, y, \text{path}(x, t_1,\dots, t_k, y))$.
 
